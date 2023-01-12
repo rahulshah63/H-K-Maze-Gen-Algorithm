@@ -11,10 +11,12 @@
       }
     }
 
+    window.seed = 63
+
     HuntnKill.prototype.getMaze = function () {
       var start =
-        this.grid[Math.floor(Math.random() * this.size)][
-          Math.floor(Math.random() * this.size)
+        this.grid[Math.floor(getRandom(window.seed, this.size))][
+          Math.floor(getRandom(window.seed, this.size))
         ]
       start.visited = true
       var current = start
@@ -32,7 +34,9 @@
                 if (neighbors.length != 0) {
                   found = true
                   var neighbor =
-                    neighbors[Math.floor(Math.random() * neighbors.length)]
+                    neighbors[
+                      Math.floor(getRandom(window.seed, neighbors.length))
+                    ]
                   current = node
                   this.grid[current.x][current.y].visited = true
                   this.grid[neighbor.x][neighbor.y].addChildren(current)
@@ -44,7 +48,8 @@
           if (!found) return this.buildMaze()
         } else {
           // Kill
-          var next = neighbors[Math.floor(Math.random() * neighbors.length)]
+          var next =
+            neighbors[Math.floor(getRandom(window.seed, neighbors.length))]
           current.addChildren(next)
           current = next
           this.grid[current.x][current.y].visited = true
@@ -85,6 +90,15 @@
         }
       }
       return maze
+    }
+
+    const getRandom = function (seed, clippingSize) {
+      console.log(clippingSize, seed)
+      const m = 2147483647,
+        a = m / 21,
+        b = m / 5
+      window.seed = (a * window.seed + b) % m
+      return window.seed % clippingSize
     }
 
     function HKNode(x, y) {
@@ -137,7 +151,7 @@
     c.width = 2000
     c.height = 2000
     var ctx = c.getContext("2d")
-    var huntnKill = new HuntnKill(20)
+    var huntnKill = new HuntnKill(100)
 
     var maze = huntnKill.getMaze()
     console.log(maze)
