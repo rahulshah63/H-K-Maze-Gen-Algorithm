@@ -11,7 +11,7 @@
       }
     }
 
-    window.seed = 63
+    window.seed = 6387635437983727
 
     HuntnKill.prototype.getMaze = function () {
       var start =
@@ -148,17 +148,54 @@
 
     //This stuff doesn't matter, it's only here to make the snippet runnable.
     var c = document.getElementById("canvas")
-    c.width = 2000
-    c.height = 2000
+    c.width = 700
+    c.height = 700
     var ctx = c.getContext("2d")
     var huntnKill = new HuntnKill(100)
+    const pixels = 3
 
     var maze = huntnKill.getMaze()
     console.log(maze)
     for (var x = 0; x < maze.length; x++) {
       for (var y = 0; y < maze[x].length; y++) {
-        if (maze[x][y]) ctx.fillRect(x * 5, y * 5, 5, 5)
+        if (maze[x][y]) ctx.fillRect(x * pixels, y * pixels, pixels, pixels)
       }
     }
+
+    //add player
+    var player = { x: 1, y: 1 }
+    function addPlayer() {
+      ctx.fillStyle = "red"
+      ctx.fillRect(player.x * pixels, player.y * pixels, pixels, pixels)
+    }
+    function removePlayer() {
+      ctx.fillStyle = "white"
+      ctx.fillRect(player.x * pixels, player.y * pixels, pixels, pixels)
+    }
+    addPlayer()
+
+    //update player
+    function updatePlayer(x, y) {
+      if (maze[x][y] == 0) {
+        removePlayer()
+        player.x = x
+        player.y = y
+        addPlayer()
+      }
+    }
+
+    //add event listener
+    document.addEventListener("keydown", function (e) {
+      if (e.key == "ArrowUp") updatePlayer(player.x, player.y - 1)
+      if (e.key == "ArrowDown") updatePlayer(player.x, player.y + 1)
+      if (e.key == "ArrowLeft") updatePlayer(player.x - 1, player.y)
+      if (e.key == "ArrowRight") updatePlayer(player.x + 1, player.y)
+    })
+
+    // //animation loop
+    // ;(function loop() {
+    //   requestAnimationFrame(loop)
+    //   //updatePlayer(player.x, player.y + 1)
+    // })()
   })
 })()
