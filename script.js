@@ -11,7 +11,8 @@
       }
     }
 
-    window.seed = 6387635437983727
+    window.seed = 63876354379837273
+    window.resourceCount = 500
 
     HuntnKill.prototype.getMaze = function () {
       var start =
@@ -72,6 +73,14 @@
           if (this.grid[x][y].visited) {
             maze[x * 2 + 1][y * 2 + 1] = 0
             var children = this.grid[x][y].children
+            if (children.length === 0 && window.resourceCount > 0) {
+              //20% chance
+              if (Math.random() < 0.2) {
+                window.resourceCount--
+                maze[x * 2 + 1][y * 2 + 1] = 2
+              }
+              continue
+            }
             for (var child of children) {
               if (child.x < x) {
                 maze[x * 2][y * 2 + 1] = 0
@@ -93,7 +102,6 @@
     }
 
     const getRandom = function (seed, clippingSize) {
-      console.log(clippingSize, seed)
       const m = 2147483647,
         a = m / 21,
         b = m / 5
@@ -155,17 +163,36 @@
     const pixels = 3
 
     var maze = huntnKill.getMaze()
+    while (window.resourceCount > 0) {
+      //get random node
+      var x = Math.floor(Math.random() * maze.length)
+      var y = Math.floor(Math.random() * maze[x].length)
+      console.log(x, y, maze[x][y], window.resourceCount)
+      if (maze[x][y] === 0) {
+        maze[x][y] = 2
+        window.resourceCount--
+      }
+    }
     console.log(maze)
     for (var x = 0; x < maze.length; x++) {
       for (var y = 0; y < maze[x].length; y++) {
-        if (maze[x][y]) ctx.fillRect(x * pixels, y * pixels, pixels, pixels)
+        if (maze[x][y] === 1) {
+          ctx.fillStyle = "black"
+          ctx.fillRect(x * pixels, y * pixels, pixels, pixels)
+        } else if (maze[x][y] === 0) {
+          ctx.fillStyle = "white"
+          ctx.fillRect(x * pixels, y * pixels, pixels, pixels)
+        } else {
+          ctx.fillStyle = "red"
+          ctx.fillRect(x * pixels, y * pixels, pixels, pixels)
+        }
       }
     }
 
     //add player
     var player = { x: 1, y: 1 }
     function addPlayer() {
-      ctx.fillStyle = "red"
+      ctx.fillStyle = "blue"
       ctx.fillRect(player.x * pixels, player.y * pixels, pixels, pixels)
     }
     function removePlayer() {
