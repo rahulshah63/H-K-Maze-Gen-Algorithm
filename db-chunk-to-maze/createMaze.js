@@ -33,7 +33,7 @@ for (let x = 0; x < mazeChunk.length; x++) {
   temp = []
 }
 
-const maze2D = temp.flat()
+const maze2D = mazeBlock.flat()
 
 // //Save to file
 fs.writeFileSync("mazeChunk.json", JSON.stringify(mazeChunk))
