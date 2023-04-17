@@ -1,4 +1,6 @@
-import chunks from "./db-chunk.json" assert { type: "json" }
+import chunks from "./db-mazechunks-epoch2.json" assert { type: "json" }
+// import mazeChunk from "./mazeChunk.json" assert { type: "json" }
+// import maze from "./maze.json" assert { type: "json" }
 import fs from "fs"
 
 const size = 16
@@ -8,6 +10,7 @@ chunks.forEach((chunk) => {
   const y = parseInt(chunk.index.split(",")[1])
   //convert to 2d array
   const chunkSplitRaw = chunk.data.match(new RegExp(".{1," + size + "}", "g"))
+  console.log(chunkSplitRaw)
   const chunkArrRaw = chunkSplitRaw.map((row) => row.split(""))
   const chunk2d = chunkArrRaw.map((row) => row.map((cell) => parseInt(cell)))
   mazeChunk[x] = mazeChunk[x] || []
@@ -15,22 +18,24 @@ chunks.forEach((chunk) => {
 })
 
 //Convert to complete maze 2D array
-var maze = []
-var maze2D = []
-console.log(mazeChunk.length, mazeChunk[0].length)
+var temp = []
+var mazeBlock = []
 
-mazeChunk.forEach((chunkX) => {
-  chunkX.forEach((chunkY) => {
-    chunkY.forEach((row, y) => {
-      maze[y] = maze[y] || []
-      maze[y] = maze[y].concat(row)
+for (let x = 0; x < mazeChunk.length; x++) {
+  for (let y = 0; y < mazeChunk[x].length; y++) {
+    const chunk = mazeChunk[x][y]
+    chunk.forEach((row, y) => {
+      temp[y] = temp[y] || []
+      temp[y] = temp[y].concat(row)
     })
-  })
-  maze2D.push(maze)
-})
+  }
+  mazeBlock.push(temp)
+  temp = []
+}
 
-maze2D = maze2D.flat()
+const maze2D = temp.flat()
 
-//Save to file
+// //Save to file
 fs.writeFileSync("mazeChunk.json", JSON.stringify(mazeChunk))
-fs.writeFileSync("maze.json", JSON.stringify(maze2D))
+fs.writeFileSync("mazeBlock.json", JSON.stringify(mazeBlock))
+fs.writeFileSync("maze2D.json", JSON.stringify(maze2D))

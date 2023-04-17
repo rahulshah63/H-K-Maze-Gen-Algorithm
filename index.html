@@ -7,8 +7,17 @@
     <title>Maze</title>
     <link rel="stylesheet" href="style.css" />
     <script src="script.js" defer></script>
+    <script>
+      function to_image() {
+        var canvas = document.getElementById("canvas")
+        document.getElementById("theimage").src = canvas.toDataURL()
+        Canvas2Image.saveAsPNG(canvas)
+      }
+    </script>
   </head>
   <body>
     <canvas id="canvas"></canvas>
+    <div><button onclick="to_image()">Draw to Image</button></div>
+    <image id="theimage" alt="'img"></image>
   </body>
 </html>
